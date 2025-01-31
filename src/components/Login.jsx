@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const navigate = useNavigate(); // Initialize the navigate hook
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -15,29 +17,22 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/login', {
-        method: 'POST',
+      const response = await axios.post('http://localhost:5000/login', credentials, {
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials),
       });
 
-      if (!response.ok) throw new Error(`Login failed: ${response.statusText}`);
+      if (response.status === 200) {
+        const { role } = response.data;
 
-      const data = await response.json();
-
-      if (data.message === 'Login successful') {
-        window.location.href = 'test.html';
-      } else {
-        alert(data.error || 'Login failed');
+        if (role === 'admin') {
+          navigate('/admin-panel');
+        } else {
+          navigate('/user-panel');
+        }
       }
     } catch (error) {
-      console.error('Error during login:', error);
-      alert('An error occurred while logging in.');
+      setError(error.response?.data?.message || 'Invalid email or password.');
     }
-  };
-
-  const handleRegisterClick = () => {
-    navigate('/register'); // Redirect to the register page
   };
 
   return (
@@ -84,12 +79,15 @@ const Login = () => {
       {/* Login Form */}
       <div className="bg-gradient-to-r from-pink-100 to-pink-200 p-8 rounded-3xl shadow-lg w-full max-w-md z-10 border-4 border-pink-400 text-center">
         <h2 className="text-4xl font-extrabold mb-6 text-pink-700">Login to ConfessIt</h2>
+
+        {error && <p className="text-red-500">{error}</p>}
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={credentials.username}
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={credentials.email}
             onChange={handleChange}
             required
             className="w-full px-5 py-3 border-2 border-pink-500 rounded-full focus:outline-none focus:ring-4 focus:ring-pink-300 text-lg"
@@ -112,7 +110,7 @@ const Login = () => {
           <p className="text-center text-pink-700">
             Don't have an account?{' '}
             <span
-              onClick={handleRegisterClick} // Handle click to navigate
+              onClick={() => navigate('/register')}
               className="underline cursor-pointer hover:text-pink-600"
             >
               Register
@@ -125,5 +123,6 @@ const Login = () => {
 };
 
 export default Login;
+
 
 
