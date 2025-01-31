@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    semester: '',
-    department: '',
-    gmail: '',
+    username: '',  // Changed from 'name' to 'username'
+    email: '',
     password: ''
   });
 
-  const navigate = useNavigate(); // Initialize navigate hook
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,48 +21,46 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate if all fields are filled
-    if (!formData.name || !formData.semester || !formData.department || !formData.gmail || !formData.password) {
-      alert('Please fill all the fields.');
+    if (!formData.username || !formData.email || !formData.password) {
+      setError('Please fill all fields.');
       return;
     }
 
     try {
-      const response = await fetch('/register', {
-        method: 'POST',
+      const response = await axios.post('http://localhost:5000/register', formData, {
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-      alert(data.message);
-
-      if (data.message === 'User registered successfully!') {
-        localStorage.setItem('user', JSON.stringify(formData)); // Persist user data
-        navigate('/login'); // Redirect to the login page
+      if (response.status === 201) {
+        alert('User registered successfully!');
+        navigate('/login');
       }
     } catch (error) {
-      console.error('Error registering user:', error);
-      alert('An error occurred. Please try again.');
+      if (error.response) {
+        setError(error.response.data.message || 'Registration failed.');
+      } else {
+        setError('Server error. Please try again.');
+      }
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen relative overflow-hidden px-4" style={{ backgroundColor: '#fce4ec' }}>
+    <div className="flex justify-center items-center h-screen relative overflow-hidden px-4 bg-gradient-to-r from-pink-100 to-pink-200">
+      {/* Background Image and Overlay */}
       <motion.div
         className="absolute top-0 left-0 w-full h-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
         style={{
-          backgroundImage: "url('/path/to/romantic-night.jpg')",
+          backgroundImage: "url('/path/to/romantic-night.jpg')",  // Ensure the path to your image is correct
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.7)'
+          filter: 'brightness(0.6)',
         }}
       />
 
-      {/* Floating hearts animation */}
+      {/* Floating Hearts Animation */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <motion.div
@@ -87,49 +85,35 @@ const Register = () => {
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-pink-100 to-pink-200 p-8 rounded-3xl shadow-lg w-full max-w-md text-center z-10 border-4 border-pink-400">
+      {/* Register Form */}
+      <div className="bg-gradient-to-r from-pink-100 to-pink-200 p-8 rounded-3xl shadow-lg w-full max-w-md z-10 border-4 border-pink-400 text-center">
         <h2 className="text-4xl font-extrabold mb-6 text-pink-700">Welcome to ConfessIt</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
-            name="name"
-            className="w-full px-5 py-3 border-2 border-pink-500 rounded-full focus:outline-none focus:ring-4 focus:ring-pink-300 text-lg"
-            placeholder="Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="semester"
-            className="w-full px-5 py-3 border-2 border-pink-500 rounded-full focus:outline-none focus:ring-4 focus:ring-pink-300 text-lg"
-            placeholder="Semester"
-            value={formData.semester}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="department"
-            className="w-full px-5 py-3 border-2 border-pink-500 rounded-full focus:outline-none focus:ring-4 focus:ring-pink-300 text-lg"
-            placeholder="Department"
-            value={formData.department}
+            name="username"  // Changed from 'name' to 'username'
+            className="w-full px-4 py-3 border border-pink-500 rounded-full text-lg"
+            placeholder="Username"
+            value={formData.username}
             onChange={handleChange}
             required
           />
           <input
             type="email"
-            name="gmail"
-            className="w-full px-5 py-3 border-2 border-pink-500 rounded-full focus:outline-none focus:ring-4 focus:ring-pink-300 text-lg"
-            placeholder="Gmail"
-            value={formData.gmail}
+            name="email"
+            className="w-full px-4 py-3 border border-pink-500 rounded-full text-lg"
+            placeholder="Email"
+            value={formData.email}
             onChange={handleChange}
             required
           />
           <input
             type="password"
             name="password"
-            className="w-full px-5 py-3 border-2 border-pink-500 rounded-full focus:outline-none focus:ring-4 focus:ring-pink-300 text-lg"
+            className="w-full px-4 py-3 border border-pink-500 rounded-full text-lg"
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
@@ -148,7 +132,5 @@ const Register = () => {
 };
 
 export default Register;
-
-
 
 
