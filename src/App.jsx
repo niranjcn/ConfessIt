@@ -1,23 +1,17 @@
-// App.js
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+export default App;
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import './App.css';
 
 function App() {
   return (
-    <>
-      <Router>
-        <Routes>
-          {/* Redirect from homepage to register page */}
-          <Route path="/" element={<Register />} /> 
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </Router>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" />} /> {/* Redirect to login */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;
-
