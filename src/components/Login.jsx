@@ -25,9 +25,9 @@ const Login = () => {
         const { role } = response.data;
 
         if (role === 'admin') {
-          navigate('/admin-panel');
+          navigate('/adminpanel');
         } else {
-          navigate('/user-panel');
+          navigate('/adminpanel');
         }
       }
     } catch (error) {
@@ -104,6 +104,7 @@ const Login = () => {
           <button
             type="submit"
             className="w-full bg-pink-600 text-white py-3 rounded-full hover:bg-pink-700 transition duration-200 font-semibold text-lg"
+          
           >
             Login
           </button>

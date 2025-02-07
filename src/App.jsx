@@ -2,6 +2,7 @@ export default App;
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
+import Adminpanel from './components/admin/Adminpanel.jsx'
 import './App.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} /> {/* Redirect to login */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/adminpanel" element={<Adminpanel />} />
       </Routes>
     </Router>
   );
