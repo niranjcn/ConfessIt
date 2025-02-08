@@ -147,11 +147,30 @@ const UserPanel = () => {
   }, []);
 
   const handleLike = async (id) => {
-    await fetch(`http://localhost:5000/confessions/${id}/like`, {
-      method: "POST",
-    });
-    fetchConfessions();
-    fetchTopConfessions();
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/confessions/${id}/like`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        fetchConfessions();
+        fetchTopConfessions();
+      } else {
+        const data = await response.json();
+        console.error("Error liking confession:", data.error);
+      }
+    } catch (error) {
+      console.error("Error liking confession:", error);
+    }
   };
 
   const handleSubmit = async () => {
@@ -220,6 +239,7 @@ const UserPanel = () => {
                 <button
                   className="mt-2 text-yellow-300"
                   onClick={() => handleLike(confession._id)}
+                  disabled={confession.likedBy?.includes(userData?._id)} // Disable if already liked
                 >
                   ❤️ {confession.likes}
                 </button>
