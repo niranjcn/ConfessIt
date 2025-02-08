@@ -16,6 +16,16 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    // Check for admin credentials
+    if (credentials.email === 'admin2025@gmail.com' && credentials.password === 'adminkey35') {
+      // Simulate a successful login for admin
+      localStorage.setItem('authToken', 'admin-token'); // Store a dummy token for admin
+      localStorage.setItem('role', 'admin'); // Set role to admin
+      navigate('/adminpanel'); // Redirect to admin panel
+      return; // Exit the function early
+    }
+  
+    // Normal login flow for non-admin users
     try {
       const response = await axios.post('http://localhost:5000/login', credentials, {
         headers: { 'Content-Type': 'application/json' },
