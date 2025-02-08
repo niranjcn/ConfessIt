@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
@@ -8,7 +7,6 @@ import Female from "/src/assets/bitmoji/bitmofe.png";
 import Male from "/src/assets/bitmoji/bitmomale.png";
 
 const Sidebar = ({ isOpen, toggleSidebar, handleLogout, userData }) => {
-
   const navigate = useNavigate();
 
   const handleHomepageClick = () => {
@@ -17,7 +15,6 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, userData }) => {
   };
 
   return (
-
     <motion.div
       className={`fixed top-0 left-0 h-full w-72 bg-gradient-to-br from-pink-700 via-red-500 to-purple-800 shadow-2xl p-6 transition-transform border-r border-pink-300 flex flex-col ${
         isOpen ? "translate-x-0" : "-translate-x-full"
@@ -60,35 +57,28 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, userData }) => {
                 : "hover:bg-pink-500"
             }`}
           >
-
-
             🏠 Homepage
           </button>
         </li>
         <li>
-
           <Link
             to="/confessions"
             className="block px-4 py-3 rounded-lg hover:bg-pink-500 transition font-semibold"
             onClick={toggleSidebar}
           >
-
             💬 Anonymous Confession
           </Link>
         </li>
         <li>
-
           <Link
             to="/matchmaking"
             className="block px-4 py-3 rounded-lg hover:bg-pink-500 transition font-semibold"
             onClick={toggleSidebar}
           >
-
             ❤️ Random Matchmaking
           </Link>
         </li>
       </ul>
-
 
       {/* Logout Button */}
       <div className="pb-6">
@@ -99,7 +89,6 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, userData }) => {
           }}
           className="w-full p-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
         >
-
           Logout
         </button>
       </div>
@@ -143,7 +132,6 @@ const UserPanel = () => {
   };
 
   return (
-
     <div className="flex h-screen bg-gradient-to-br from-pink-600 via-red-500 to-purple-700 text-white">
       {/* Sidebar */}
       <Sidebar
@@ -192,7 +180,6 @@ const UserPanel = () => {
               <p className="text-lg text-gray-200 mt-2">{item.desc}</p>
               {/* Glowing Cupid Effect */}
               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/30 to-purple-500/30 blur-xl opacity-60"></div>
-
             </div>
           ))}
         </div>
@@ -200,5 +187,4 @@ const UserPanel = () => {
     </div>
   );
 };
-
 export default UserPanel;
