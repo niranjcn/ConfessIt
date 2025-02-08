@@ -18,8 +18,7 @@ const UserSchema = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, default: "user" },
-    gender: { type: String, required: true }
+    role: { type: String, default: "user" }
 });
 
 const User = mongoose.model("User", UserSchema);
@@ -29,6 +28,7 @@ const ConfessionSchema = new mongoose.Schema({
     recipient: { type: String, required: true },
     message: { type: String, required: true },
     likes: { type: Number, default: 0 },
+    likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Track users who liked
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -36,7 +36,7 @@ const Confession = mongoose.model("Confession", ConfessionSchema);
 
 // **Register Route**
 app.post("/register", async (req, res) => {
-    const { username, email, password,gender } = req.body;
+    const { username, email, password } = req.body;
 
     try {
         const existingUser = await User.findOne({ email });
@@ -44,7 +44,7 @@ app.post("/register", async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new User({ username, email, password: hashedPassword, gender });
+        const newUser = new User({ username, email, password: hashedPassword });
         await newUser.save();
 
         res.status(201).json({ message: "User registered successfully" });
@@ -127,12 +127,21 @@ app.get("/confessions", async (req, res) => {
     }
 });
 
-app.post("/confessions/:id/like", async (req, res) => {
+app.post("/confessions/:id/like", verifyToken, async (req, res) => {
     try {
         const confession = await Confession.findById(req.params.id);
         if (!confession) return res.status(404).json({ error: "Confession not found" });
+
+        // Check if the user has already liked the confession
+        if (confession.likedBy.includes(req.user.id)) {
+            return res.status(400).json({ error: "You have already liked this confession" });
+        }
+
+        // Add the user's ID to the likedBy array and increment likes
+        confession.likedBy.push(req.user.id);
         confession.likes += 1;
         await confession.save();
+
         res.json({ message: "Confession liked" });
     } catch (err) {
         res.status(500).json({ error: err.message });
