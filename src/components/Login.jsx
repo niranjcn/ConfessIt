@@ -15,26 +15,27 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await axios.post('http://localhost:5000/login', credentials, {
         headers: { 'Content-Type': 'application/json' },
       });
-
+  
       if (response.status === 200) {
-        const { role } = response.data;
-
-        if (role === 'admin') {
-          navigate('/adminpanel');
-        } else {
-          navigate('/adminpanel');
-        }
+        const { token, role } = response.data;
+  
+        // Store the token and role in localStorage
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('role', role);
+  
+        // Navigate to /userpanel after successful login
+        navigate('/userpanel');
       }
     } catch (error) {
       setError(error.response?.data?.message || 'Invalid email or password.');
     }
   };
-
+  
   return (
     <div className="flex justify-center items-center h-screen relative overflow-hidden px-4 bg-gradient-to-r from-pink-100 to-pink-200">
       {/* Background Image and Overlay */}
@@ -104,7 +105,6 @@ const Login = () => {
           <button
             type="submit"
             className="w-full bg-pink-600 text-white py-3 rounded-full hover:bg-pink-700 transition duration-200 font-semibold text-lg"
-          
           >
             Login
           </button>
@@ -124,6 +124,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
-

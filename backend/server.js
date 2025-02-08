@@ -165,5 +165,16 @@ app.get("/leaderboard", async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+// **User Panel Route (Protected)**
+app.get("/userpanel", verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id); // Retrieve the user based on the verified token
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        res.json({ username: user.username, email: user.email, role: user.role });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 app.listen(5000, () => console.log("Server running on port 5000"));
