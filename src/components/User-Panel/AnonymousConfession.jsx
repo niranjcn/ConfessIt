@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Female from "/src/assets/bitmoji/bitmofe.png";
 import Male from "/src/assets/bitmoji/bitmomale.png";
 
@@ -156,15 +156,35 @@ const UserPanel = () => {
   };
 
   const handleSubmit = async () => {
-    await fetch("http://localhost:5000/confessions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recipient, message: newConfession }),
-    });
-    fetchConfessions();
-    setNewConfession("");
-    setRecipient("");
-    setShowForm(false);
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/confessions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ recipient, message: newConfession }),
+      });
+
+      if (response.ok) {
+        setNewConfession("");
+        setRecipient("");
+        setShowForm(false);
+        fetchConfessions();
+        fetchTopConfessions();
+      } else {
+        const data = await response.json();
+        console.error("Error submitting confession:", data.error);
+      }
+    } catch (error) {
+      console.error("Error submitting confession:", error);
+    }
   };
 
   const handleLogout = () => {
