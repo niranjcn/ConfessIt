@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FaChevronDown } from 'react-icons/fa'; // Import the icon
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    username: '',  // Changed from 'name' to 'username'
+    username: '',
     email: '',
-    password: ''
+    password: '',
+    gender: '', // Added gender field
   });
 
   const [error, setError] = useState('');
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,7 +23,8 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.username || !formData.email || !formData.password) {
+    // Validate all fields
+    if (!formData.username || !formData.email || !formData.password || !formData.gender) {
       setError('Please fill all fields.');
       return;
     }
@@ -53,7 +56,7 @@ const Register = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
         style={{
-          backgroundImage: "url('/path/to/romantic-night.jpg')",  // Ensure the path to your image is correct
+          backgroundImage: "url('https://example.com/romantic-night.jpg')", // Update with correct path
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'brightness(0.6)',
@@ -69,17 +72,17 @@ const Register = () => {
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              opacity: 0.8
+              opacity: 0.8,
             }}
             animate={{
               y: [0, -100],
               scale: [1, 0.5],
-              opacity: [1, 0]
+              opacity: [1, 0],
             }}
             transition={{
               duration: 5,
               repeat: Infinity,
-              delay: Math.random() * 3
+              delay: Math.random() * 3,
             }}
           ></motion.div>
         ))}
@@ -88,13 +91,13 @@ const Register = () => {
       {/* Register Form */}
       <div className="bg-gradient-to-r from-pink-100 to-pink-200 p-8 rounded-3xl shadow-lg w-full max-w-md z-10 border-4 border-pink-400 text-center">
         <h2 className="text-4xl font-extrabold mb-6 text-pink-700">Welcome to ConfessIt</h2>
-        
+
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
-            name="username"  // Changed from 'name' to 'username'
+            name="username"
             className="w-full px-4 py-3 border border-pink-500 rounded-full text-lg"
             placeholder="Username"
             value={formData.username}
@@ -119,6 +122,24 @@ const Register = () => {
             onChange={handleChange}
             required
           />
+
+          {/* Gender Selection */}
+          <div className="relative">
+            <select
+              name="gender"
+              className="w-full px-4 py-3 border border-pink-500 rounded-full text-lg bg-none appearance-none"
+              value={formData.gender}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Others">Others</option>
+            </select>
+            <FaChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-pink-600 pointer-events-none" />
+          </div>
+
           <button
             type="submit"
             className="w-full bg-pink-600 text-white py-3 rounded-full hover:bg-pink-700 transition duration-200 font-semibold text-lg"
@@ -132,5 +153,3 @@ const Register = () => {
 };
 
 export default Register;
-
-

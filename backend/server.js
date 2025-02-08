@@ -18,24 +18,33 @@ const UserSchema = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, default: "user" } // Default role is 'user'
+    role: { type: String, default: "user" },
+    gender: { type: String, required: true }
 });
 
 const User = mongoose.model("User", UserSchema);
 
+const ConfessionSchema = new mongoose.Schema({
+    sender: { type: String, required: true },
+    recipient: { type: String, required: true },
+    message: { type: String, required: true },
+    likes: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now }
+});
+
+const Confession = mongoose.model("Confession", ConfessionSchema);
+
 // **Register Route**
 app.post("/register", async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password,gender } = req.body;
 
     try {
-        // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ error: "Email already exists" });
 
-        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new User({ username, email, password: hashedPassword });
+        const newUser = new User({ username, email, password: hashedPassword, gender });
         await newUser.save();
 
         res.status(201).json({ message: "User registered successfully" });
@@ -65,8 +74,11 @@ app.post("/login", async (req, res) => {
 
 // **Middleware to Verify Token**
 const verifyToken = (req, res, next) => {
-    const token = req.header("Authorization");
-    if (!token) return res.status(401).json({ error: "Access denied" });
+    const authHeader = req.header("Authorization");
+    if (!authHeader) return res.status(401).json({ error: "Access denied" });
+
+    const token = authHeader.split(" ")[1];
+    if (!token) return res.status(401).json({ error: "Invalid token format" });
 
     try {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
@@ -80,6 +92,60 @@ const verifyToken = (req, res, next) => {
 // **Protected Route Example (Dashboard)**
 app.get("/dashboard", verifyToken, (req, res) => {
     res.json({ message: "Welcome to the dashboard!", user: req.user });
+});
+
+// **User Panel Route (Protected)**
+app.get("/userpanel", verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password");
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// **Confession Routes**
+app.post("/confessions", verifyToken, async (req, res) => {
+    const { recipient, message } = req.body;
+    try {
+        const newConfession = new Confession({ sender: req.user.id, recipient, message });
+        await newConfession.save();
+        res.status(201).json({ message: "Confession submitted successfully" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get("/confessions", async (req, res) => {
+    try {
+        const confessions = await Confession.find().sort({ createdAt: -1 });
+        res.json(confessions);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post("/confessions/:id/like", async (req, res) => {
+    try {
+        const confession = await Confession.findById(req.params.id);
+        if (!confession) return res.status(404).json({ error: "Confession not found" });
+        confession.likes += 1;
+        await confession.save();
+        res.json({ message: "Confession liked" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get("/confessions/top", async (req, res) => {
+    try {
+        const topConfessions = await Confession.find().sort({ likes: -1, createdAt: -1 }).limit(5);
+        res.json(topConfessions);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.listen(5000, () => console.log("Server running on port 5000"));
