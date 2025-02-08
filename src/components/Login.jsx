@@ -16,7 +16,6 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-
     // Check for admin credentials
     if (credentials.email === 'admin2025@gmail.com' && credentials.password === 'adminkey35') {
       // Simulate a successful login for admin
@@ -27,7 +26,6 @@ const Login = () => {
     }
   
     // Normal login flow for non-admin users
-
     try {
       const response = await axios.post('http://localhost:5000/login', credentials, {
         headers: { 'Content-Type': 'application/json' },
@@ -136,3 +134,5 @@ const Login = () => {
 };
 
 export default Login;
+
+
