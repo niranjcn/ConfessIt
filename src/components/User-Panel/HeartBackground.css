@@ -1,0 +1,57 @@
+/* HeartBackground.css */
+.heart-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Behind other content */
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.heart {
+    position: absolute;
+    transition: transform 0.3s ease; /* Smooth movement */
+    color: pink; /* Set the color of the heart */
+}
+
+/* LoveWheel.css (No changes needed) */
+/* ... your existing LoveWheel.css styles ... */
+
+/* styles.css (or your main CSS file) */
+body {
+    background-color: #f0f0f0; /* Or any other light background color */
+}
+
+.app-container {
+    position: relative; /* Needed for absolute positioning of HeartBackground */
+}/* HeartBackground.css */
+.heart-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Behind other content */
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.heart {
+    position: absolute;
+    transition: transform 0.3s ease; /* Smooth movement */
+    color: pink; /* Set the color of the heart */
+}
+
+/* LoveWheel.css (No changes needed) */
+/* ... your existing LoveWheel.css styles ... */
+
+/* styles.css (or your main CSS file) */
+body {
+    background-color: #f0f0f0; /* Or any other light background color */
+}
+
+.app-container {
+    position: relative; /* Needed for absolute positioning of HeartBackground */
+}
