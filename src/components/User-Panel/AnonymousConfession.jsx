@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { FaHeart } from "react-icons/fa"; // Heart icon
 import Female from "/src/assets/bitmoji/bitmofe.png";
 import Male from "/src/assets/bitmoji/bitmomale.png";
 
@@ -194,7 +195,7 @@ const UserPanel = () => {
         setNewConfession("");
         setRecipient("");
         setShowForm(false);
-        fetchConfessions();
+        fetchConfessions(); // Refresh confessions without reloading the page
         fetchTopConfessions();
       } else {
         const data = await response.json();
@@ -211,12 +212,21 @@ const UserPanel = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-pink-600 via-red-500 to-purple-700 text-white">
+      {/* Hamburger Menu */}
+      <button
+        onClick={toggleSidebar}
+        className="fixed top-4 left-4 z-50 p-2 bg-pink-600 rounded-lg text-white hover:bg-pink-700 transition"
+      >
+        ☰
+      </button>
+
       <Sidebar
         isOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
         handleLogout={handleLogout}
         userData={userData}
       />
+
       <div
         className={`flex-1 transition-all p-8 ${
           isSidebarOpen ? "ml-72" : "ml-0"
@@ -227,7 +237,7 @@ const UserPanel = () => {
         </h1>
         <div className="grid grid-cols-2 gap-6">
           {/* Recent Confessions */}
-          <div>
+          <div className="overflow-y-auto max-h-[70vh]">
             <h2 className="text-2xl font-bold mb-4">Recent Confessions</h2>
             {confessions.map((confession) => (
               <div
@@ -237,11 +247,18 @@ const UserPanel = () => {
                 <p className="text-lg">{confession.message}</p>
                 <p className="text-sm">To: {confession.recipient}</p>
                 <button
-                  className="mt-2 text-yellow-300"
+                  className="mt-2 flex items-center space-x-1"
                   onClick={() => handleLike(confession._id)}
-                  disabled={confession.likedBy?.includes(userData?._id)} // Disable if already liked
+                  disabled={confession.likedBy?.includes(userData?._id)}
                 >
-                  ❤️ {confession.likes}
+                  <FaHeart
+                    className={`text-xl ${
+                      confession.likedBy?.includes(userData?._id)
+                        ? "text-red-500"
+                        : "text-white"
+                    }`}
+                  />
+                  <span>{confession.likes}</span>
                 </button>
               </div>
             ))}

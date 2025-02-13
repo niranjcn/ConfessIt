@@ -4,6 +4,7 @@ import Register from './components/Register.jsx';
 import UserPanel from './components/User-Panel/UserPanel.jsx'; // Make sure 'P' is capitalized
 import AnonymousConfession from './components/User-Panel//AnonymousConfession'; // Import the AnonymousConfession component
 import RandomMatchmaking from './components/User-Panel//RandomMatchmaking';
+import AdminPanel from './components/Admin-Panel/AdminPanel.jsx';
 import './App.css';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/userpanel" element={isAuthenticated ? <UserPanel /> : <Navigate to="/login" />} /> {/* Protected Route */}
         <Route path="/confessions" element={<AnonymousConfession />} /> {/* Route to AnonymousConfession */}
         <Route path="/matchmaking" element={<RandomMatchmaking />} /> {/* Route to RandomMatchmaking */}
+        <Route path="/adminpanel" element={isAuthenticated ? <AdminPanel /> : <Navigate to="/login" />} /> 
 
       </Routes>
     </Router>
